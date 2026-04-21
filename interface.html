@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Tracker</title>
+    <style>
+        .table-container{
+            overflow-y: scroll;
+            height:200px
+        }
+        table {
+            border: 1px solid;
+            border-collapse: collapse;
+            margin: 30px;
+        }
+
+        table td,
+        table th {
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        padding: 8px;
+        }
+
+        table td:first-child {
+        border-left: none;
+        }
+
+        table td:last-child {
+        border-right: none;
+        }
+  </style>
+</head>
+<body>
+    <h1>Patient Tracker Observation Page</h1>
+    <br>
+    <h2>Patient List Page</h2>
+    <label for="patient_name"> Patient Name: </label>
+    <input id="patient_name"/>
+
+    <label for="patient_dob"> Patient DOB: </label>
+    <input id="patient_dob"/>
+
+    <label for="patient_note"> Note: </label>
+    <input id="patient_note"/>
+    <br>
+    <button onclick="completeCreatePatient()">Submit Patient Creation Request</button>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Note</th>
+        </tr>
+        </thead>
+        <tbody id="patients_list">
+        </tbody>
+    </table>
+    <h2>Patient Detail Page</h2>
+    <br>
+    <label for="patient_id"> Patient ID: </label>
+    <input id="patient_id"/>
+    <br>
+    <br>
+    <h2>New Measurement form</h2>
+    <br>
+    <label for="value"> Amount: </label>
+    <input id="value"/>
+    <br>
+
+    <label for="unit"> Units: </label>
+    <input id="unit"/>
+    <br>
+
+
+
+    <label for="m_protocol_id"> Protocol ID: </label>
+    <input id="m_protocol_id"/>
+    <br>
+
+    <label for="m_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
+    <input id="m_application_time"/>
+    <br>
+
+    <label for="m_status"> Status: </label>
+    <input id="m_status"/>
+    <br>
+
+    <label for="m_phenomenon_type_id"> Phenomenon Type ID: </label>
+    <input id="m_phenomenon_type_id"/>
+    <br>
+    <br>
+    <button onclick="completeCreateMeasurement()">Submit Measurement Creation Request</button>
+
+    <h2>New Category Observation Form</h2>
+    <br>
+
+    <label for="c_phenomenon_id"> Phenomenon ID: </label>
+    <input id="c_phenomenon_id"/>
+    <br>
+
+    <label for="c_presence"> Presence: </label>
+    <input id="c_presence"/>
+    <br>
+
+    <label for="c_protocol_id"> Protocol ID: </label>
+    <input id="c_protocol_id"/>
+    <br>
+
+    <label for="c_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
+    <input id="c_application_time"/>
+    <br>
+
+    <label for="c_status"> Status: </label>
+    <input id="c_status"/>
+    <br>
+    <button onclick="completeCreateCategoryObservation()">Submit Category Observation Creation Request</button>
+    <br>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>Observation ID</th>
+            <th>Patient ID</th>
+            <th>Patient Name</th>
+            <th>Recording Time</th>
+            <th>Applicability Time</th>
+            <th>Protocol ID</th>
+            <th>Status</th>
+            <th>Reject Reason</th>
+        </tr>
+        </thead>
+        <tbody id="observations_list">
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <button onclick="completeEvaluateRules()">Evaluate Rules</button>
+    <br>
+    <br>
+    <label for="inferences">Inferences: </label>
+    <span id="inferences">[]</span>
+    <h3>Reject Observations</h3>
+    <label for="rejection_id"> Id: </label>
+    <input id="rejection_id"/>
+    <label for="rejection_reason"> Reasoning: </label>
+    <input id="rejection_reason"/>
+    <br>
+    <button onclick="submitRejection()">Submit rejection</button>
+    <br>
+    <br>
+    <h2>Catalog Page</h2>
+    <br>
+    <h3>Phenomenon Types</h3>
+    <label for="pt_name"> Name: </label>
+    <input id="pt_name"/>
+    <label for="pt_type"> Type: </label>
+    <input id="pt_type"/>
+    <label for="pt_units"> Allowed Units (Please separate by commas): </label>
+    <input id="pt_units"/>
+    <label for="pt_phenomena"> Phenomena (Please separate by commas): </label>
+    <input id="pt_phenomena"/>
+    <button onclick="submitPT()">Submit Phenomenon Type</button>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>String name</th>
+            <th>Phenomenon Type Id</th>
+            <th>Allowed Units</th>
+            <th>Type</th>
+        </tr>
+        </thead>
+        <tbody id="pt_list">
+        </tbody>
+    </table>
+    <br>
+     <h3>Protocols</h3>
+     <label for="p_name"> Name: </label>
+     <input id="p_name"/>
+     <label for="p_description"> Description: </label>
+     <input id="p_description"/>
+     <label for="p_rating"> Accuracy Rating: </label>
+     <input id="p_rating"/>
+     <br>
+     <button onclick="submitProtocol()">Submit Protocol</button>
+     <br>
+     <table>
+        <thead>
+        <tr>
+            <th>Protocol name</th>
+            <th>Protocol Id</th>
+            <th>Protocol Description</th>
+            <th>Accuracy Rating</th>
+        </tr>
+        </thead>
+        <tbody id="p_list">
+        </tbody>
+    </table>
+    <br>
+    <h2>Logs</h2>
+    <br>
+    <h3>Command Logs</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Entry id</th>
+            <th>Type</th>
+            <th>Payload</th>
+            <th>Executed At</th>
+            <th>User</th>
+        </tr>
+        </thead>
+        <tbody id="commandlog_list">
+        </tbody>
+    </table>
+    <br>
+     <h3>Audit Logs</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Entry Id</th>
+            <th>Observation Id</th>
+            <th>Patient Id</th>
+            <th>Event</th>
+            <th>Timestamp</th>
+        </tr>
+        </thead>
+        <tbody id="auditlog_list">
+        </tbody>
+    </table>
+
+    <script>
+
+        async function getAuditLogs(){
+             let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/audit-log");
+            let result = await response.json();
+           let table = document.getElementById("auditlog_list");
+           table.innerHTML = "";
+            for (const entry of result) {
+                let entryId = entry.id;
+                let obs = entry.observationId;
+                let patient = entry.patientId;
+                let event = entry.event;
+                let execution_time = entry.timestamp;
+                let row = document.createElement("tr");
+
+                let cell1 = document.createElement("td");
+                cell1.textContent = entryId;
+                row.appendChild(cell1);
+
+                let cell2 = document.createElement("td");
+                cell2.textContent = obs;
+                row.appendChild(cell2);
+
+                let cell3 = document.createElement("td");
+                cell3.textContent = patient;
+                row.appendChild(cell3);
+
+                let cell4 = document.createElement("td");
+                cell4.textContent = event;
+                row.appendChild(cell4);
+
+                let cell5 = document.createElement("td");
+                cell5.textContent = execution_time;
+                row.appendChild(cell5);
+
+                table.appendChild(row);
+            
+            }    
+        }
+
+
+        async function getCommandLogs(){
+        let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/command-log");
+            let result = await response.json();
+           let table = document.getElementById("commandlog_list");
+           table.innerHTML = "";
+            for (const entry of result) {
+                let entryId = entry.id;
+                let type = entry.commandType;
+                let payload = entry.payload;
+                let executedAt = entry.executedAt;
+                let user = entry.user;
+
+
+                let row = document.createElement("tr");
+
+                let cell1 = document.createElement("td");
+                cell1.textContent = entryId;
+                row.appendChild(cell1);
+
+                let cell2 = document.createElement("td");
+                cell2.textContent = type;
+                row.appendChild(cell2);
+
+                let cell3 = document.createElement("td");
+                cell3.textContent = payload;
+                row.appendChild(cell3);
+
+                let cell4 = document.createElement("td");
+                cell4.textContent = executedAt;
+                row.appendChild(cell4);
+
+                let cell5 = document.createElement("td");
+                cell5.textContent = user;
+                row.appendChild(cell5);
+
+                table.appendChild(row);
+                }
+
+        }
+
+        getCommandLogs();
+        getAuditLogs();
+        setInterval(getCommandLogs, 3000);
+        setInterval(getAuditLogs, 3000);
+        
+    </script>
+
+
+
+
+    <script>
+        async function submitProtocol(){
+            let name = document.getElementById("p_name").value;
+            let description = document.getElementById("p_description").value;
+            let accuracy_rating = document.getElementById("p_rating").value;
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let formData = new FormData();
+            formData.append("name", name);
+            formData.append("description", description);
+            formData.append("accuracy_rating", accuracy_rating);
+            let request =
+            {
+                method: "POST",
+                body: formData
+            };
+
+            let response = await fetch(host + "/api/protocols", request);
+            if(response.status == 200){
+                alert("Protocol succesfully created!")
+            } else{
+                alert("Something went wrong! Protocol was not able to be created!")
+            }
+
+        }
+
+
+        async function getProtocol(){
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/protocols");
+            let result = await response.json();
+           let table = document.getElementById("p_list");
+           table.innerHTML = "";
+           for (const entry of result) {
+            let p_typeId = entry.protocol_id;
+            let name = entry.name;
+            let description = entry.description;
+            let accuracy_rating = entry.accuracyRating;
+
+            let row = document.createElement("tr");
+
+            let cell1 = document.createElement("td");
+            cell1.textContent = name;
+            row.appendChild(cell1);
+
+            let cell2 = document.createElement("td");
+            cell2.textContent = p_typeId;
+            row.appendChild(cell2);
+
+            let cell3 = document.createElement("td");
+            cell3.textContent = description;
+            row.appendChild(cell3);
+
+            let cell4 = document.createElement("td");
+            cell4.textContent = accuracy_rating;
+            row.appendChild(cell4);
+
+            table.appendChild(row);
+            }
+
+        }
+
+        getProtocol();
+        setInterval(getProtocol, 3000);
+        
+    </script>
+
+    <script>
+        async function submitPT(){
+            let name = document.getElementById("pt_name").value;
+            let kind = document.getElementById("pt_type").value;
+            let allowed_units = document.getElementById("pt_units").value;
+            let phenomena = document.getElementById("pt_phenomena").value;
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let formData = new FormData();
+            formData.append("name", name);
+            formData.append("kind", kind);
+            formData.append("allowed_units", allowed_units);
+            formData.append("phenomena", phenomena);
+            let request =
+            {
+                method: "POST",
+                body: formData
+            };
+
+            let response = await fetch(host + "/api/phenomenon-types", request);
+            if(response.status == 200){
+                alert("Phenomenon Type succesfully created!")
+            } else{
+                alert("Something went wrong! PhenomemonType was not able to be created!")
+            }
+
+        }
+
+        async function getPT(){
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/phenomenon-types");
+            let result = await response.json();
+           let table = document.getElementById("pt_list");
+           table.innerHTML = "";
+           for (const entry of result) {
+            let p_typeId = entry.p_typeId;
+            let name = entry.name;
+            let kind = entry.kind;
+            let allowedUnits = entry.allowedUnits;
+
+            let row = document.createElement("tr");
+
+            let cell1 = document.createElement("td");
+            cell1.textContent = name;
+            row.appendChild(cell1);
+
+            let cell2 = document.createElement("td");
+            cell2.textContent = p_typeId;
+            row.appendChild(cell2);
+
+            let cell3 = document.createElement("td");
+            cell3.textContent = allowedUnits;
+            row.appendChild(cell3);
+
+            let cell4 = document.createElement("td");
+            cell4.textContent = kind;
+            row.appendChild(cell4);
+
+            table.appendChild(row);
+            }
+
+        }
+
+        getPT();
+        setInterval(getPT, 3000);
+    </script>
+
+    
+    <script>
+        async function submitRejection(){
+            let id = document.getElementById("rejection_id").value;
+            let reasoning = document.getElementById("rejection_reason").value;
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let formData = new FormData();
+            formData.append("id", id);
+            formData.append("reasoning", reasoning);
+            let request =
+            {
+                method: "POST",
+                body: formData
+            };
+
+                let response = await fetch(host + "/api/observations/" + id + "/reject", request);
+                if(response.status == 200){
+                    alert("Observation succesfully rejected!")
+                } else{
+                    alert("Something went wrong! Observation was unable to be rejected!")
+                }
+
+
+        }
+    </script>
+
+
+
+    <script>
+        async function completeEvaluateRules(){
+            let patient_id = document.getElementById("patient_id").value;
+            let ans_string = "";
+            if (patient_id.trim() === "" ) {
+                return;         
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let request = {
+                    method: "POST",
+                }; 
+                let response = await fetch(host + "/api/patients/" + patient_id + "/evaluate", request);
+                let result = await response.json();
+                for(const entry of result){
+                    ans_string += entry + ";"
+                }
+
+                document.getElementById("inferences").textContent = ans_string;
+            }
+        }
+
+        completeEvaluateRules();
+       setInterval(completeEvaluateRules, 4000);
+
+        async function getObservations(){
+            let patient_id = document.getElementById("patient_id").value;
+            if (patient_id.trim() == "" ) {
+                return;        
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let request = {
+                    method: "POST",
+                }; 
+                let response = await fetch(host + "/api/patients/" + patient_id + "/observations", request);
+                let result = await response.json();
+                let table = document.getElementById("observations_list");
+                table.innerHTML = "";
+
+                for (const entry of result) {
+                    let observationId = entry.observation_id;
+                    let patientId = entry.patient.actor_id;
+                    let patientName = entry.patient.full_name;
+                    let recordingTime = entry.recordingTime;
+                    let applicabilityTime = entry.applicabilityTime;
+                    let protocolId = entry.protocol.protocol_id;
+                    let status = entry.status;
+                    let rejectReason = entry.rejectReason;
+
+                    let row = document.createElement("tr");
+
+                    let cell1 = document.createElement("td");
+                    cell1.textContent = observationId;
+                    row.appendChild(cell1);
+
+                    let cell2 = document.createElement("td");
+                    cell2.textContent = patientId;
+                    row.appendChild(cell2);
+
+                    let cell3 = document.createElement("td");
+                    cell3.textContent = patientName;
+                    row.appendChild(cell3);
+
+                    let cell4 = document.createElement("td");
+                    cell4.textContent = recordingTime;
+                    row.appendChild(cell4);
+
+                    let cell5 = document.createElement("td");
+                    cell5.textContent = applicabilityTime;
+                    row.appendChild(cell5);
+
+                    let cell6 = document.createElement("td");
+                    cell6.textContent = protocolId;
+                    row.appendChild(cell6);
+
+                    let cell7 = document.createElement("td");
+                    cell7.textContent = status;
+                    row.appendChild(cell7);
+
+                    let cell8 = document.createElement("td");
+                    cell8.textContent = rejectReason;
+                    row.appendChild(cell8);
+                    table.appendChild(row);
+
+                }
+            }
+
+
+        }
+
+        getObservations();
+        setInterval(getObservations, 3000);
+
+        
+    </script>
+
+
+    <script>
+        async function completeCreateMeasurement(){
+            let value = document.getElementById("value").value;
+            let unit = document.getElementById("unit").value;
+            let patient_id = document.getElementById("patient_id").value;
+            let app_time = document.getElementById("m_application_time").value;
+            let protocol_id = document.getElementById("m_protocol_id").value;
+            let status = document.getElementById("m_status").value;
+            let phen_type_id = document.getElementById("m_phenomenon_type_id").value;
+
+            if (value.trim() === "" || unit.trim() === "" || patient_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || phen_type_id.trim() === "") {
+                alert("One or more input fields are missing! Please complete before proceeding.");         
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let formData = new FormData();
+                formData.append("value", value);
+                formData.append("unit", unit);
+                formData.append("patient_id", patient_id);
+                formData.append("app_time", app_time);
+                formData.append("protocol_id", protocol_id);
+                formData.append("status", status);
+                formData.append("phen_type_id", phen_type_id);
+                let request = {
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/observations/measurement", request);
+                
+                if(response.status == 200){
+                    alert("Measurement was succesfully created!");
+                } else{
+                    alert("Something went wrong, and measurement could not be created!")
+                }
+            }
+
+        }
+
+        async function completeCreateCategoryObservation(){
+            let presence = document.getElementById("c_presence").value;
+            let patient_id = document.getElementById("patient_id").value;
+            let phen_id = document.getElementById("c_phenomenon_id").value;
+            let app_time = document.getElementById("c_application_time").value;
+            let protocol_id = document.getElementById("c_protocol_id").value;
+            let status = document.getElementById("c_status").value;
+
+            if (presence.trim() === "" || patient_id.trim() === "" || phen_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "") {
+                alert("One or more input fields are missing! Please complete before proceeding.");         
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let formData = new FormData();
+                formData.append("presence", presence);
+                formData.append("patient_id", patient_id);
+                formData.append("phen_id", phen_id);
+                formData.append("app_time", app_time);
+                formData.append("protocol_id", protocol_id);
+                formData.append("status", status);
+
+                let request = {
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/observations/category", request);
+                if(response.status == 200){
+                    alert("Category observation was succesfully created!");
+                } else{
+                    alert("Something went wrong, and category obervation could not be created!")
+                }
+            }           
+
+
+
+        }
+    </script>
+    
+
+    
+
+
+
+
+    <script>
+        async function completeCreatePatient(){
+            let name = document.getElementById("patient_name").value;
+            let dob = document.getElementById("patient_dob").value;
+            let note = document.getElementById("patient_note").value;
+            if(name.trim() == "" || dob.trim() == "" || note.trim() == ""){
+                alert("One or more input fields are misisng! Please complete before proceeding. ");
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let formData = new FormData();
+                formData.append("name", name);
+                formData.append("dob", dob);
+                formData.append("note", note);
+                let request = {
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/patients", request);
+                if(response.status == 200){
+                    alert("Patient has been created");
+                } else{
+                    alert("Something went wrong, and patient could not be created!")
+                }
+            }
+        }
+
+        async function getPatients(){
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/patients");
+            let result = await response.json();
+            let table = document.getElementById("patients_list");
+            table.innerHTML = "";
+
+            for(const entry of result){
+                let name = entry.full_name;
+                let dob = entry.dob;
+                let note = entry.note;
+                let id = entry.actor_id;
+
+                
+
+                let row = document.createElement("tr");
+
+                let cell1 = document.createElement("td");
+                cell1.textContent = id;
+                row.appendChild(cell1);
+                table.appendChild(row);
+
+                let cell2 = document.createElement("td");
+                cell2.textContent = name;
+                row.appendChild(cell2);
+                table.appendChild(row);
+
+                let cell3 = document.createElement("td");
+                cell3.textContent = dob;
+                row.appendChild(cell3);
+                table.appendChild(row);
+
+                let cell4 = document.createElement("td");
+                cell4.textContent = note;
+                row.appendChild(cell4);
+                table.appendChild(row);
+
+
+            }
+
+           
+        }
+
+         getPatients();
+         setInterval(getPatients, 3000);
+
+    </script>
+
+
+
+
+</body>
+</html>
