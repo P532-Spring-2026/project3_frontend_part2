@@ -568,7 +568,7 @@
             } else{
                 let host = "https://project3-backend-pwfk.onrender.com";
                 let request = {
-                    method: "POST",
+                    method: "GET",
                 }; 
                 let response = await fetch(host + "/api/patients/" + patient_id + "/observations", request);
                 let result = await response.json();
