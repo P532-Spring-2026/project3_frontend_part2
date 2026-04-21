@@ -166,13 +166,25 @@
     <table>
         <thead>
         <tr>
-            <th>String name</th>
+            <th>Name</th>
             <th>Phenomenon Type Id</th>
             <th>Allowed Units</th>
             <th>Type</th>
         </tr>
         </thead>
         <tbody id="pt_list">
+        </tbody>
+    </table>
+    <h3>Phenomenons</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phenomenon Id</th>
+            <th>PhenomemonType</th>
+        </tr>
+        </thead>
+        <tbody id="pheno_list">
         </tbody>
     </table>
     <br>
@@ -231,10 +243,49 @@
         </tbody>
     </table>
 
+
+    <script>
+        async function getPhenomenon(){
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let response = await fetch(host + "/api/phenomenon");
+                let result = await response.json();
+                let table = document.getElementById("pheno_list");
+                table.innerHTML = "";
+                for (const entry of result) {
+                    let id = entry.p_Id;
+                    let phenType = entry.phenomenonType.name;
+                    let name = entry.name;
+               
+                    let row = document.createElement("tr");
+
+                    let cell1 = document.createElement("td");
+                    cell1.textContent = name;
+                    row.appendChild(cell1);
+
+                    let cell2 = document.createElement("td");
+                    cell2.textContent = id;
+                    row.appendChild(cell2);
+
+                    let cell3 = document.createElement("td");
+                    cell3.textContent = phenType;
+                    row.appendChild(cell3);
+
+            
+
+                    table.appendChild(row);
+            
+                }
+
+        }
+
+        getPhenomenon();
+        setInterval(getPhenomenon, 3000);
+    </script>
+
     <script>
 
         async function getAuditLogs(){
-             let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-pwfk.onrender.com";
             let response = await fetch(host + "/api/audit-log");
             let result = await response.json();
            let table = document.getElementById("auditlog_list");
@@ -269,8 +320,10 @@
 
                 table.appendChild(row);
             
-            }    
-        }
+            }  
+            
+            
+    }
 
 
         async function getCommandLogs(){
@@ -284,7 +337,7 @@
                 let type = entry.commandType;
                 let payload = entry.payload;
                 let executedAt = entry.executedAt;
-                let user = entry.user;
+                let user = entry.user.full_name;
 
 
                 let row = document.createElement("tr");
@@ -575,7 +628,7 @@
 
         getObservations();
         setInterval(getObservations, 3000);
-
+        //
         
     </script>
 
