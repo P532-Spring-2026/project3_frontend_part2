@@ -247,11 +247,20 @@
             <th>Payload</th>
             <th>Executed At</th>
             <th>User</th>
+            
         </tr>
         </thead>
         <tbody id="commandlog_list">
         </tbody>
     </table>
+    <h3>Undo Command</h3>
+    <label for="undo_command_id"> Command Log Entry Id: </label>
+    <input id="undo_command_id"/>
+
+    <label for="undo_user_id"> Staff ID: </label>
+    <input id="undo_user_id"/>
+    <br>
+    <button onclick="submitUndo()">Undo Command</button>
     <br>
      <h3>Audit Logs</h3>
     <table>
@@ -373,6 +382,36 @@
 
         getPhenomenon();
         setInterval(getPhenomenon, 3000);
+    </script>
+        
+    <script>
+        async function submitUndo(){
+            let id = document.getElementById("undo_command_id").value;
+            let user_id = document.getElementById("undo_user_id").value;
+            if(id.trim() === "" || user_id.trim() === ""){
+            alert("Please fill in all inputs!");
+        } else{
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let formData = new FormData();
+            formData.append("user_id", user_id);
+
+            let request = {
+                method: "POST",
+                body: formData
+            };
+
+            let response = await fetch(host + "/api/command-log/" + id + "/undo", request);
+
+            if(response.status === 200){
+                alert("Command successfully undone!");
+            } else{
+                alert("Something went wrong! Command could not be undone.");
+            }
+        }
+        }
+
+
+
     </script>
 
     <script>
