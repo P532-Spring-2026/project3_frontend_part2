@@ -276,6 +276,61 @@
         <tbody id="auditlog_list">
         </tbody>
     </table>
+    <br>
+    <h3>Create Associative Function</h3>
+        <label>Arguments (use comma separators and operators when quantitative)</label><br>
+        <input id="af_args"/>
+        <br>
+        <label>Product Concept:</label>
+        <input id="af_product"/>
+        <br>
+        <label>Strategy (conjunctive / weighted):</label>
+        <input id="af_strategy"/>
+        <br>
+        <label>Threshold:</label>
+        <input id="af_threshold"/>
+        <br>
+        <button onclick="submitAF()">Create AF</button>
+    <br>
+
+    <script>
+        async function submitAF(){
+            let argsIn = document.getElementById("af_args").value;
+            let product = document.getElementById("af_product").value;
+            let strategy = document.getElementById("af_strategy").value;
+            let threshold = document.getElementById("af_threshold").value;
+            if(argsInput.trim() === "" || product.trim() === "" || strategy.trim() === "" || threshold.trim() === ""){
+                alert("Fill all fields!");
+            }
+            else{
+                let host = "https://project3-backend-pwfk.onrender.com";
+                let formData = new FormData();
+
+                formData.append("pdt_concept", product);
+                formData.append("strategy", strategy);
+                formData.append("threshold", threshold);
+
+                let response = await fetch(host + "/api/af", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if(response.status === 200){
+                    alert("Associative Function created!");
+                } else{
+                    alert("Something went wrong! AF could not be created!");
+                }
+
+
+            }
+
+    }
+
+
+        
+    </script>
+
+
 
     <script>
         async function createStaff(){
@@ -679,8 +734,8 @@
         async function completeEvaluateRules(){
             let patient_id = document.getElementById("patient_id").value;
             let ans_string = "";
-            if (patient_id.trim() === "" ) {
-                return;         
+            if (patient_id.trim() === "") {
+                alert("Make sure patient id is filled!")        
             } else{
                 let host = "https://project3-backend-pwfk.onrender.com";
                 let request = {
@@ -701,10 +756,7 @@
 
         async function getObservations(){
             let patient_id = document.getElementById("patient_id").value;
-            if (patient_id.trim() == "" ) {
-                return;        
-            } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-pwfk.onrender.com";
                 let request = {
                     method: "GET",
                 }; 
@@ -781,17 +833,14 @@
                     row.appendChild(cell12);
                     table.appendChild(row);
 
-                
 
-                }
             }
-
-
-        }
+        }   
 
         getObservations();
         setInterval(getObservations, 3000);
         //
+        
         
     </script>
 
