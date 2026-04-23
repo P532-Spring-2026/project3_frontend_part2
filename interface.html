@@ -31,6 +31,27 @@
   </style>
 </head>
 <body>
+    <h1>Staff Inventory</h1>
+        <label for="staff_name"> Name: </label>
+        <input id="staff_name"/>
+        <label for="staff_type"> Type: </label>
+        <input id="staff_type"/>
+        <button onclick="createStaff()">Create Staff</button>
+        <br>
+        <br>
+        <table>
+            <thead>
+            <tr>
+                <th>Staff ID</th>
+                <th>Name</th>
+                <th>Type</th>
+            </tr>
+            </thead>
+            <tbody id="staff_list">
+            </tbody>
+        </table>
+    <br>
+    <br>
     <h1>Patient Tracker Observation Page</h1>
     <br>
     <h2>Patient List Page</h2>
@@ -42,6 +63,8 @@
 
     <label for="patient_note"> Note: </label>
     <input id="patient_note"/>
+    <label for="p_staff_id"> Staff ID: </label>
+    <input id="p_staff_id"/>
     <br>
     <button onclick="completeCreatePatient()">Submit Patient Creation Request</button>
     <br>
@@ -63,57 +86,53 @@
     <input id="patient_id"/>
     <br>
     <br>
-    <h2>New Measurement form</h2>
+    <h3>New Measurement form</h3>
+    <br>
+    <label for="m_phenomenon_type_id"> Phenomenon Type ID: </label>
+    <input id="m_phenomenon_type_id"/>
     <br>
     <label for="value"> Amount: </label>
     <input id="value"/>
     <br>
-
     <label for="unit"> Units: </label>
     <input id="unit"/>
     <br>
-
-
-
     <label for="m_protocol_id"> Protocol ID: </label>
     <input id="m_protocol_id"/>
     <br>
-
     <label for="m_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
     <input id="m_application_time"/>
     <br>
-
     <label for="m_status"> Status: </label>
     <input id="m_status"/>
     <br>
-
-    <label for="m_phenomenon_type_id"> Phenomenon Type ID: </label>
-    <input id="m_phenomenon_type_id"/>
+    <label for="m_staff_id"> Staff ID: </label>
+    <input id="m_staff_id"/>
     <br>
     <br>
     <button onclick="completeCreateMeasurement()">Submit Measurement Creation Request</button>
 
-    <h2>New Category Observation Form</h2>
+    <h3>New Category Observation Form</h3>
     <br>
-
     <label for="c_phenomenon_id"> Phenomenon ID: </label>
     <input id="c_phenomenon_id"/>
     <br>
-
     <label for="c_presence"> Presence: </label>
     <input id="c_presence"/>
     <br>
-
     <label for="c_protocol_id"> Protocol ID: </label>
     <input id="c_protocol_id"/>
     <br>
-
     <label for="c_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
     <input id="c_application_time"/>
     <br>
 
     <label for="c_status"> Status: </label>
     <input id="c_status"/>
+    <br>
+    <label for="c_staff_id"> Staff ID: </label>
+    <input id="c_staff_id"/>
+    <br>
     <br>
     <button onclick="completeCreateCategoryObservation()">Submit Category Observation Creation Request</button>
     <br>
@@ -129,6 +148,10 @@
             <th>Protocol ID</th>
             <th>Status</th>
             <th>Reject Reason</th>
+            <th>Staff Id</th>
+            <th>Type</th>
+            <th>Concept</th>
+            <th>Source</th>
         </tr>
         </thead>
         <tbody id="observations_list">
@@ -146,6 +169,8 @@
     <input id="rejection_id"/>
     <label for="rejection_reason"> Reasoning: </label>
     <input id="rejection_reason"/>
+    <label for="r_staff_id"> Staff ID: </label>
+    <input id="r_staff_id"/>
     <br>
     <button onclick="submitRejection()">Submit rejection</button>
     <br>
@@ -243,6 +268,74 @@
         </tbody>
     </table>
 
+    <script>
+        async function createStaff(){
+            let name = document.getElementById("staff_name").value;
+            let type = document.getElementById("staff_type").value;
+            let host = "https://project3-backend-pwfk.onrender.com";
+            if(name.trim() === "" || type.trim() === ""){
+                alert("Please fill out both staff name and staff type.");
+            } else{
+                let formData = new FormData();
+                formData.append("name", name);
+                formData.append("type", type);
+
+                let request = {
+
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/staff", request);
+                
+                if(response.status === 200){
+                    alert("Staff successfully created!");
+                } else{
+                    alert("Something went wrong! Staff could not be created.");
+                }
+                }
+            
+        }
+
+        
+
+        async function getStaff(){
+            let host = "https://project3-backend-pwfk.onrender.com";
+            let response = await fetch(host + "/api/staff");
+            let result = await response.json();
+
+            let table = document.getElementById("staff_list");
+            table.innerHTML = "";
+            for(const entry of result){
+                let id = entry.actor_id;
+                let name = entry.full_name;
+                let type = entry.type;
+
+                let row = document.createElement("tr");
+
+                let cell1 = document.createElement("td");
+                cell1.textContent = id;
+                row.appendChild(cell1);
+
+                let cell2 = document.createElement("td");
+                cell2.textContent = name;
+                row.appendChild(cell2);
+
+                let cell3 = document.createElement("td");
+                cell3.textContent = type;
+                row.appendChild(cell3);
+
+                table.appendChild(row);
+            }
+
+
+           
+        }
+         getStaff();
+         setInterval(getStaff, 3000);
+
+    </script>
+
 
     <script>
         async function getPhenomenon(){
@@ -273,7 +366,7 @@
             
 
                     table.appendChild(row);
-            
+
                 }
 
         }
@@ -514,10 +607,14 @@
         async function submitRejection(){
             let id = document.getElementById("rejection_id").value;
             let reasoning = document.getElementById("rejection_reason").value;
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let staff_id = document.getElementById("r_staff_id").value;
+            if(id.trim() === "" || reasoning.trim() === "" || staff_id.trim() === ""){
+                alert("Please fill in all inputs!")
+            } else{
+                let host = "https://project3-backend-pwfk.onrender.com";
             let formData = new FormData();
-            formData.append("id", id);
             formData.append("reasoning", reasoning);
+            formData.append("staff_id", staff_id);
             let request =
             {
                 method: "POST",
@@ -531,6 +628,8 @@
                     alert("Something went wrong! Observation was unable to be rejected!")
                 }
 
+            }
+            
 
         }
     </script>
@@ -584,6 +683,10 @@
                     let protocolId = entry.protocol.protocol_id;
                     let status = entry.status;
                     let rejectReason = entry.rejectReason;
+                    let staffId = entry.staff.actor_id;
+                    let source = entry.source;
+                    let concept_identifier = entry.conceptIdentifier;
+                    let type = entry.type;
 
                     let row = document.createElement("tr");
 
@@ -618,7 +721,28 @@
                     let cell8 = document.createElement("td");
                     cell8.textContent = rejectReason;
                     row.appendChild(cell8);
+
+                    let cell9 = document.createElement("td");
+                    cell9.textContent = staffId;
+                    row.appendChild(cell9);
+
+                    let cell10 = document.createElement("td");
+                    cell10.textContent = type;
+                    row.appendChild(cell10);
+
+                    let cell11 = document.createElement("td");
+                    cell11.textContent = concept_identifier;
+                    row.appendChild(cell11);
+
+                    let cell12 = document.createElement("td");
+                    cell12.textContent = source;
+                    if(source == "INFERRED"){
+                        cell12.style.fontStyle = "italic";
+                    }
+                    row.appendChild(cell12);
                     table.appendChild(row);
+
+                
 
                 }
             }
@@ -642,8 +766,9 @@
             let protocol_id = document.getElementById("m_protocol_id").value;
             let status = document.getElementById("m_status").value;
             let phen_type_id = document.getElementById("m_phenomenon_type_id").value;
+            let staff_id = document.getElementById("m_staff_id").value;
 
-            if (value.trim() === "" || unit.trim() === "" || patient_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || phen_type_id.trim() === "") {
+            if (value.trim() === "" || unit.trim() === "" || patient_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || phen_type_id.trim() === "" || staff_id.trim() === "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
                 let host = "https://project3-backend-pwfk.onrender.com";
@@ -655,6 +780,7 @@
                 formData.append("protocol_id", protocol_id);
                 formData.append("status", status);
                 formData.append("phen_type_id", phen_type_id);
+                formData.append("staff_id", staff_id);
                 let request = {
                     method: "POST",
                     body: formData
@@ -678,8 +804,10 @@
             let app_time = document.getElementById("c_application_time").value;
             let protocol_id = document.getElementById("c_protocol_id").value;
             let status = document.getElementById("c_status").value;
+            let staff_id = document.getElementById("c_staff_id").value;
 
-            if (presence.trim() === "" || patient_id.trim() === "" || phen_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "") {
+
+            if (presence.trim() === "" || patient_id.trim() === "" || phen_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || staff_id.trim() === "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
                 let host = "https://project3-backend-pwfk.onrender.com";
@@ -690,6 +818,7 @@
                 formData.append("app_time", app_time);
                 formData.append("protocol_id", protocol_id);
                 formData.append("status", status);
+                formData.append("staff_id", staff_id);
 
                 let request = {
                     method: "POST",
@@ -720,7 +849,8 @@
             let name = document.getElementById("patient_name").value;
             let dob = document.getElementById("patient_dob").value;
             let note = document.getElementById("patient_note").value;
-            if(name.trim() == "" || dob.trim() == "" || note.trim() == ""){
+            let staff_id = document.getElementById("p_staff_id").value;
+            if(name.trim() == "" || dob.trim() == "" || note.trim() == "" || staff_id.trim() == ""){
                 alert("One or more input fields are misisng! Please complete before proceeding. ");
             } else{
                 let host = "https://project3-backend-pwfk.onrender.com";
@@ -728,6 +858,7 @@
                 formData.append("name", name);
                 formData.append("dob", dob);
                 formData.append("note", note);
+                formData.append("staff_id", staff_id);
                 let request = {
                     method: "POST",
                     body: formData
@@ -762,17 +893,14 @@
                 let cell1 = document.createElement("td");
                 cell1.textContent = id;
                 row.appendChild(cell1);
-                table.appendChild(row);
-
+            
                 let cell2 = document.createElement("td");
                 cell2.textContent = name;
                 row.appendChild(cell2);
-                table.appendChild(row);
-
+               
                 let cell3 = document.createElement("td");
                 cell3.textContent = dob;
                 row.appendChild(cell3);
-                table.appendChild(row);
 
                 let cell4 = document.createElement("td");
                 cell4.textContent = note;
