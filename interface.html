@@ -303,7 +303,7 @@
                 alert("Fill all fields!");
             }
             else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
 
                 formData.append("pdt_concept", product);
@@ -338,7 +338,7 @@
         async function createStaff(){
             let name = document.getElementById("staff_name").value;
             let type = document.getElementById("staff_type").value;
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             if(name.trim() === "" || type.trim() === ""){
                 alert("Please fill out both staff name and staff type.");
             } else{
@@ -366,7 +366,7 @@
         
 
         async function getStaff(){
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/staff");
             let result = await response.json();
 
@@ -405,7 +405,7 @@
 
     <script>
         async function getPhenomenon(){
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let response = await fetch(host + "/api/phenomenon");
                 let result = await response.json();
                 let table = document.getElementById("pheno_list");
@@ -448,7 +448,7 @@
             if(id.trim() === "" || user_id.trim() === ""){
             alert("Please fill in all inputs!");
         } else{
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let formData = new FormData();
             formData.append("user_id", user_id);
 
@@ -474,7 +474,7 @@
     <script>
 
         async function getAuditLogs(){
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/audit-log");
             let result = await response.json();
            let table = document.getElementById("auditlog_list");
@@ -516,7 +516,7 @@
 
 
         async function getCommandLogs(){
-        let host = "https://project3-backend-pwfk.onrender.com";
+        let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/command-log");
             let result = await response.json();
            let table = document.getElementById("commandlog_list");
@@ -571,7 +571,7 @@
             let name = document.getElementById("p_name").value;
             let description = document.getElementById("p_description").value;
             let accuracy_rating = document.getElementById("p_rating").value;
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let formData = new FormData();
             formData.append("name", name);
             formData.append("description", description);
@@ -593,7 +593,7 @@
 
 
         async function getProtocol(){
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/protocols");
             let result = await response.json();
            let table = document.getElementById("p_list");
@@ -638,7 +638,7 @@
             let kind = document.getElementById("pt_type").value;
             let allowed_units = document.getElementById("pt_units").value;
             let phenomena = document.getElementById("pt_phenomena").value;
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let formData = new FormData();
             formData.append("name", name);
             formData.append("kind", kind);
@@ -660,7 +660,7 @@
         }
 
         async function getPT(){
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/phenomenon-types");
             let result = await response.json();
            let table = document.getElementById("pt_list");
@@ -707,7 +707,7 @@
             if(id.trim() === "" || reasoning.trim() === "" || staff_id.trim() === ""){
                 alert("Please fill in all inputs!")
             } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
             let formData = new FormData();
             formData.append("reasoning", reasoning);
             formData.append("staff_id", staff_id);
@@ -739,7 +739,7 @@
             if (patient_id.trim() === "") {
                 alert("Make sure patient id is filled!")        
             } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let request = {
                     method: "POST",
                 }; 
@@ -756,7 +756,7 @@
 
         async function getObservations(){
             let patient_id = document.getElementById("patient_id").value;
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
                 let request = {
                     method: "GET",
                 }; 
@@ -859,7 +859,7 @@
             if (value.trim() === "" || unit.trim() === "" || patient_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || phen_type_id.trim() === "" || staff_id.trim() === "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
                 formData.append("value", value);
                 formData.append("unit", unit);
@@ -898,7 +898,7 @@
             if (presence.trim() === "" || patient_id.trim() === "" || phen_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || staff_id.trim() === "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
                 formData.append("presence", presence);
                 formData.append("patient_id", patient_id);
@@ -941,7 +941,7 @@
             if(name.trim() == "" || dob.trim() == "" || note.trim() == "" || staff_id.trim() == ""){
                 alert("One or more input fields are misisng! Please complete before proceeding. ");
             } else{
-                let host = "https://project3-backend-pwfk.onrender.com";
+                let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
                 formData.append("name", name);
                 formData.append("dob", dob);
@@ -962,7 +962,7 @@
         }
 
         async function getPatients(){
-            let host = "https://project3-backend-pwfk.onrender.com";
+            let host = "https://project3-backend-part2.onrender.com";
             let response = await fetch(host + "/api/patients");
             let result = await response.json();
             let table = document.getElementById("patients_list");
