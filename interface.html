@@ -756,7 +756,7 @@
                 max = 0.0;
             }
 
-            if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min) || checkEmptyInput(max) || checkEmptyInput(staff_id)) {
+            if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min.toString()) || checkEmptyInput(max.toString()) || checkEmptyInput(staff_id)) {
                 alert("Please fill in all inputs to proceed!");
             }  else{
                 let formData = new FormData();
