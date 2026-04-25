@@ -52,7 +52,7 @@
         </table>
     <br>
     <br>
-    <h1>Patient Tracker Observation Page</h1>
+    <h1>Patient Tracker Page</h1>
     <br>
     <h2>Patient List Page</h2>
     <label for="patient_name"> Patient Name: </label>
@@ -66,6 +66,7 @@
     <label for="p_staff_id"> Staff ID: </label>
     <input id="p_staff_id"/>
     <br>
+     <br>
     <button onclick="completeCreatePatient()">Submit Patient Creation Request</button>
     <br>
     <table>
@@ -80,13 +81,11 @@
         <tbody id="patients_list">
         </tbody>
     </table>
-    <h2>Patient Detail Page</h2>
-    <br>
-    <label for="patient_id"> Patient ID: </label>
-    <input id="patient_id"/>
-    <br>
+    <h2>Observations Page</h2>
     <br>
     <h3>New Measurement form</h3>
+    <label for="m_patient_id"> Patient ID: </label>
+    <input id="m_patient_id"/>
     <br>
     <label for="m_phenomenon_type_id"> Phenomenon Type ID: </label>
     <input id="m_phenomenon_type_id"/>
@@ -103,9 +102,6 @@
     <label for="m_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
     <input id="m_application_time"/>
     <br>
-    <label for="m_status"> Status: </label>
-    <input id="m_status"/>
-    <br>
     <label for="m_staff_id"> Staff ID: </label>
     <input id="m_staff_id"/>
     <br>
@@ -113,6 +109,8 @@
     <button onclick="completeCreateMeasurement()">Submit Measurement Creation Request</button>
 
     <h3>New Category Observation Form</h3>
+    <label for="c_patient_id"> Patient ID: </label>
+    <input id="c_patient_id"/>
     <br>
     <label for="c_phenomenon_id"> Phenomenon ID: </label>
     <input id="c_phenomenon_id"/>
@@ -126,17 +124,19 @@
     <label for="c_application_time"> Time Observed (Must be in format: YYYY-MM-DDThh:mm:ssZ): </label>
     <input id="c_application_time"/>
     <br>
-
-    <label for="c_status"> Status: </label>
-    <input id="c_status"/>
-    <br>
     <label for="c_staff_id"> Staff ID: </label>
     <input id="c_staff_id"/>
     <br>
     <br>
     <button onclick="completeCreateCategoryObservation()">Submit Category Observation Creation Request</button>
     <br>
+    <h3>View Observations per Patient</h3>
     <br>
+    <label for="patient_id"> Patient ID: </label>
+    <input id="patient_id"/>
+    <button onclick="getObservations()">Update</button>
+    <br>
+     <br>
     <table>
         <thead>
         <tr>
@@ -284,8 +284,14 @@
     </table>
     <br>
     <h3>Create Associative Function</h3>
-        <label>Arguments (use comma separators and operators when quantitative)</label><br>
+        <br>
+        <br>
+        <h4>Instructions: For a single argument, separate using commas and operators as needed. Separate each arguement from other arguments using semicolons; Add weights in corresponding order separated by semicolons.</h4>
+        <label>Arguments:</label><br>
         <input id="af_args"/>
+        <br>
+        <label>Weights:</label><br>
+        <input id="weights"/>
         <br>
         <label>Product Concept:</label>
         <input id="af_product"/>
@@ -298,12 +304,13 @@
         <br>
         <button onclick="submitAF()">Create AF</button>
     <br>
-    <!--
+  
     <script>
         async function submitAF(){
-            let argsIn = document.getElementById("af_args").value;
+            let argsInput = document.getElementById("af_args").value;
             let product = document.getElementById("af_product").value;
             let strategy = document.getElementById("af_strategy").value;
+            let weights = document.getElementById("af_weights").value;
             let threshold = document.getElementById("af_threshold").value;
             if(argsInput.trim() == "" || product.trim() == "" || strategy.trim() == "" || threshold.trim() == ""){
                 alert("Fill all fields!");
@@ -312,14 +319,19 @@
                 let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
 
+                formData.append("arg_concepts", argsInput);
+                formData.append("weights", weights)
                 formData.append("pdt_concept", product);
                 formData.append("strategy", strategy);
                 formData.append("threshold", threshold);
 
-                let response = await fetch(host + "/api/af", {
+                
+                let request = {
+
                     method: "POST",
                     body: formData
-                });
+                };
+                let response = await fetch(host + "/api/af", request)
 
                 if(response.status == 200){
                     alert("Associative Function created!");
@@ -331,12 +343,9 @@
             }
 
     }
-            
-
-
         
     </script>
-    -->
+ 
 
 
 
@@ -362,9 +371,12 @@
                 
                 if(response.status == 200){
                     alert("Staff successfully created!");
+                    document.getElementById("staff_name").value = "";
+                    document.getElementById("staff_type").value = "";
                 } else{
                     alert("Something went wrong! Staff could not be created.");
                 }
+                
                 }
             
         }
@@ -452,7 +464,7 @@
             let id = document.getElementById("undo_command_id").value;
             let user_id = document.getElementById("undo_user_id").value;
             if(id.trim() == "" || user_id.trim() == ""){
-            alert("Please fill in all inputs!");
+                alert("Please fill in all inputs!");
         } else{
             let host = "https://project3-backend-part2.onrender.com";
             let formData = new FormData();
@@ -467,6 +479,8 @@
 
             if(response.status == 200){
                 alert("Command successfully undone!");
+                document.getElementById("undo_command_id").value = "";
+                document.getElementById("undo_user_id").value = "";
             } else{
                 alert("Something went wrong! Command could not be undone.");
             }
@@ -595,9 +609,12 @@
 
             let response = await fetch(host + "/api/protocols", request);
             if(response.status == 200){
-                alert("Protocol succesfully created!")
+                alert("Protocol succesfully created!");
+                document.getElementById("p_name").value = "";
+                document.getElementById("p_description").value = "";
+                document.getElementById("p_rating").value = "";
             } else{
-                alert("Something went wrong! Protocol was not able to be created!")
+                alert("Something went wrong! Protocol was not able to be created!");
             }
 
         }
@@ -669,9 +686,15 @@
 
                 let response = await fetch(host + "/api/phenomenon-types", request);
                 if(response.status == 200){
-                    alert("Phenomenon Type succesfully created!")
+                    alert("Phenomenon Type succesfully created!");
+                    document.getElementById("pt_name").value = "";
+                    document.getElementById("pt_type").value = "";
+                    document.getElementById("pt_units").value = "";
+                    document.getElementById("pt_phenomena").value = "";
+                    document.getElementById("pt_min").value = "";
+                    document.getElementById("pt_max").value = "";
                 } else{
-                    alert("Something went wrong! PhenomemonType was not able to be created!")
+                    alert("Something went wrong! PhenomemonType was not able to be created!");
                 }
             }
             
@@ -747,7 +770,10 @@
 
                 let response = await fetch(host + "/api/observations/" + id + "/reject", request);
                 if(response.status == 200){
-                    alert("Observation succesfully rejected!")
+                    alert("Observation succesfully rejected!");
+                    document.getElementById("rejection_id").value = "";
+                    document.getElementById("rejection_reason").value = "";
+                    document.getElementById("r_staff_id").value = "";
                 } else{
                     alert("Something went wrong! Observation was unable to be rejected!")
                 }
@@ -772,19 +798,28 @@
                     method: "POST",
                 }; 
                 let response = await fetch(host + "/api/patients/" + patient_id + "/evaluate", request);
-                let result = await response.json();
-                for(const entry of result){
-                    ans_string += entry + ";"
+                if(response.status = 200){
+                    let result = await response.json();
+                    for(const entry of result){
+                        ans_string += entry + ";"
+                    }
+                    document.getElementById("inferences").textContent = ans_string;
+                    alert("Evaluation successfully completed!");
+                    document.getElementById("patient_id").value = "";
+                } else{
+                    alert("Something went wrong! Evaluation could not be completed!")
                 }
-
-                document.getElementById("inferences").textContent = ans_string;
+                
             }
         }
 
 
         async function getObservations(){
             let patient_id = document.getElementById("patient_id").value;
-            let host = "https://project3-backend-part2.onrender.com";
+            if(checkEmptyInput(patient_id)){
+                alert("Please enter id to proceed!")
+            } else{
+                let host = "https://project3-backend-part2.onrender.com";
                 let request = {
                     method: "GET",
                 }; 
@@ -863,13 +898,10 @@
                     table.appendChild(row);
 
 
+                }
             }
+                
         }   
-
-        getObservations();
-        setInterval(getObservations, 3000);
-        //
-        
         
     </script>
 
@@ -878,10 +910,10 @@
         async function completeCreateMeasurement(){
             let value = document.getElementById("value").value;
             let unit = document.getElementById("unit").value;
-            let patient_id = document.getElementById("patient_id").value;
+            let patient_id = document.getElementById("m_patient_id").value;
             let app_time = document.getElementById("m_application_time").value;
             let protocol_id = document.getElementById("m_protocol_id").value;
-            let status = document.getElementById("m_status").value;
+            let status = "ACTIVE";
             let phen_type_id = document.getElementById("m_phenomenon_type_id").value;
             let staff_id = document.getElementById("m_staff_id").value;
 
@@ -907,6 +939,13 @@
                 
                 if(response.status == 200){
                     alert("Measurement was succesfully created!");
+                    document.getElementById("value").value = "";
+                    document.getElementById("unit").value = "";
+                    document.getElementById("patient_id").value = "";
+                    document.getElementById("m_application_time").value = "";
+                    document.getElementById("m_protocol_id").value = "";
+                    document.getElementById("m_phenomenon_type_id").value = "";
+                    document.getElementById("m_staff_id").value = "";
                 } else{
                     alert("Something went wrong, and measurement could not be created!")
                 }
@@ -916,11 +955,11 @@
 
         async function completeCreateCategoryObservation(){
             let presence = document.getElementById("c_presence").value;
-            let patient_id = document.getElementById("patient_id").value;
+            let patient_id = document.getElementById("c_patient_id").value;
             let phen_id = document.getElementById("c_phenomenon_id").value;
             let app_time = document.getElementById("c_application_time").value;
             let protocol_id = document.getElementById("c_protocol_id").value;
-            let status = document.getElementById("c_status").value;
+            let status = "ACTIVE";
             let staff_id = document.getElementById("c_staff_id").value;
 
 
@@ -945,6 +984,12 @@
                 let response = await fetch(host + "/api/observations/category", request);
                 if(response.status == 200){
                     alert("Category observation was succesfully created!");
+                    document.getElementById("c_presence").value = "";
+                    document.getElementById("patient_id").value = "";
+                    document.getElementById("c_phenomenon_id").value = "";
+                    document.getElementById("c_application_time").value = "";
+                    document.getElementById("c_protocol_id").value = "";
+                    document.getElementById("c_staff_id").value = "";
                 } else{
                     alert("Something went wrong, and category obervation could not be created!")
                 }
@@ -984,6 +1029,10 @@
                 let response = await fetch(host + "/api/patients", request);
                 if(response.status == 200){
                     alert("Patient has been created");
+                    document.getElementById("patient_name").value = "";
+                    document.getElementById("patient_dob").value = "";
+                    document.getElementById("patient_note").value = "";
+                    document.getElementById("p_staff_id").value = "";
                 } else{
                     alert("Something went wrong, and patient could not be created!")
                 }
