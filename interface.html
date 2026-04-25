@@ -141,17 +141,17 @@
         <thead>
         <tr>
             <th>Observation ID</th>
+            <th>Staff Id</th>
             <th>Patient ID</th>
-            <th>Patient Name</th>
+            <th>Concept Identifiers</th>
+            <th>Protocol Id</th>
+            <th>Type</th>
             <th>Recording Time</th>
             <th>Applicability Time</th>
-            <th>Protocol ID</th>
             <th>Status</th>
             <th>Reject Reason</th>
-            <th>Staff Id</th>
-            <th>Type</th>
-            <th>Concept</th>
             <th>Source</th>
+            <th>Anomaly</th>
         </tr>
         </thead>
         <tbody id="observations_list">
@@ -175,31 +175,36 @@
     <button onclick="submitRejection()">Submit rejection</button>
     <br>
     <br>
-    <h2>Catalog Page</h2>
+    <h1>Catalog Page</h1>
     <br>
     <h3>Phenomenon Types</h3>
-    <label for="pt_name"> Name: </label>
-    <input id="pt_name"/>
-    <label for="pt_type"> Type: </label>
-    <input id="pt_type"/>
-    <label for="pt_units"> Allowed Units (Please separate by commas): </label>
-    <input id="pt_units"/>
-    <label for="pt_phenomena"> Phenomena (Please separate by commas): </label>
-    <input id="pt_phenomena"/>
-    <button onclick="submitPT()">Submit Phenomenon Type</button>
-    <br>
-    <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Phenomenon Type Id</th>
-            <th>Allowed Units</th>
-            <th>Type</th>
-        </tr>
-        </thead>
-        <tbody id="pt_list">
-        </tbody>
-    </table>
+        <label for="pt_name"> Name: </label>
+        <input id="pt_name"/>
+        <label for="pt_type"> Type: </label>
+        <input id="pt_type"/>
+        <label for="pt_units"> Allowed Units (Please separate by commas): </label>
+        <input id="pt_units"/>
+        <label for="pt_phenomena"> Phenomena (Please separate by commas): </label>
+        <input id="pt_phenomena"/>
+        <br>
+        <label for="pt_min"> Min: </label>
+        <input id="pt_min"/>
+        <br>
+        <button onclick="submitPT()">Submit Phenomenon Type</button>
+        <label for="pt_max"> Max: </label>
+        <input id="pt_max"/>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phenomenon Type Id</th>
+                <th>Allowed Units</th>
+                <th>Type</th>
+            </tr>
+            </thead>
+            <tbody id="pt_list">
+            </tbody>
+        </table>
     <h3>Phenomenons</h3>
     <table>
         <thead>
@@ -236,7 +241,7 @@
         </tbody>
     </table>
     <br>
-    <h2>Logs</h2>
+    <h1>Logs</h1>
     <br>
     <h3>Command Logs</h3>
     <table>
@@ -247,6 +252,7 @@
             <th>Payload</th>
             <th>Executed At</th>
             <th>User</th>
+            <th>Undone</th>
             
         </tr>
         </thead>
@@ -299,7 +305,7 @@
             let product = document.getElementById("af_product").value;
             let strategy = document.getElementById("af_strategy").value;
             let threshold = document.getElementById("af_threshold").value;
-            if(argsInput.trim() === "" || product.trim() === "" || strategy.trim() === "" || threshold.trim() === ""){
+            if(argsInput.trim() == "" || product.trim() == "" || strategy.trim() == "" || threshold.trim() == ""){
                 alert("Fill all fields!");
             }
             else{
@@ -315,7 +321,7 @@
                     body: formData
                 });
 
-                if(response.status === 200){
+                if(response.status == 200){
                     alert("Associative Function created!");
                 } else{
                     alert("Something went wrong! AF could not be created!");
@@ -339,7 +345,7 @@
             let name = document.getElementById("staff_name").value;
             let type = document.getElementById("staff_type").value;
             let host = "https://project3-backend-part2.onrender.com";
-            if(name.trim() === "" || type.trim() === ""){
+            if(name.trim() == "" || type.trim() == ""){
                 alert("Please fill out both staff name and staff type.");
             } else{
                 let formData = new FormData();
@@ -354,7 +360,7 @@
 
                 let response = await fetch(host + "/api/staff", request);
                 
-                if(response.status === 200){
+                if(response.status == 200){
                     alert("Staff successfully created!");
                 } else{
                     alert("Something went wrong! Staff could not be created.");
@@ -445,7 +451,7 @@
         async function submitUndo(){
             let id = document.getElementById("undo_command_id").value;
             let user_id = document.getElementById("undo_user_id").value;
-            if(id.trim() === "" || user_id.trim() === ""){
+            if(id.trim() == "" || user_id.trim() == ""){
             alert("Please fill in all inputs!");
         } else{
             let host = "https://project3-backend-part2.onrender.com";
@@ -459,7 +465,7 @@
 
             let response = await fetch(host + "/api/command-log/" + id + "/undo", request);
 
-            if(response.status === 200){
+            if(response.status == 200){
                 alert("Command successfully undone!");
             } else{
                 alert("Something went wrong! Command could not be undone.");
@@ -527,6 +533,7 @@
                 let payload = entry.payload;
                 let executedAt = entry.executedAt;
                 let user = entry.user.full_name;
+                let undone = entry.undone;
 
 
                 let row = document.createElement("tr");
@@ -550,6 +557,10 @@
                 let cell5 = document.createElement("td");
                 cell5.textContent = user;
                 row.appendChild(cell5);
+
+                let cell6 = document.createElement("td");
+                cell6.textContent = undone;
+                row.appendChild(cell6);
 
                 table.appendChild(row);
                 }
@@ -639,25 +650,42 @@
             let allowed_units = document.getElementById("pt_units").value;
             let phenomena = document.getElementById("pt_phenomena").value;
             let host = "https://project3-backend-part2.onrender.com";
-            let formData = new FormData();
-            formData.append("name", name);
-            formData.append("kind", kind);
-            formData.append("allowed_units", allowed_units);
-            formData.append("phenomena", phenomena);
-            let request =
-            {
-                method: "POST",
-                body: formData
-            };
+            let min = document.getElementById("pt_min").value;
+            let max = document.getElementById("pt_max").value;
 
-            let response = await fetch(host + "/api/phenomenon-types", request);
-            if(response.status == 200){
-                alert("Phenomenon Type succesfully created!")
-            } else{
-                alert("Something went wrong! PhenomemonType was not able to be created!")
+            if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min) || checkEmptyInput(max)){
+                alert("Please fill in all inputs to proceed!")
+            }  else{
+                let formData = new FormData();
+                formData.append("name", name);
+                formData.append("kind", kind);
+                formData.append("allowed_units", allowed_units);
+                formData.append("phenomena", phenomena);
+                let request =
+                {
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/phenomenon-types", request);
+                if(response.status == 200){
+                    alert("Phenomenon Type succesfully created!")
+                } else{
+                    alert("Something went wrong! PhenomemonType was not able to be created!")
+                }
             }
+            
+            
 
         }
+
+         function checkEmptyInput(var_input){
+            if(var_input.trim() == ""){
+                return true;
+            } else {
+                return false;
+            }
+         }
 
         async function getPT(){
             let host = "https://project3-backend-part2.onrender.com";
@@ -704,7 +732,7 @@
             let id = document.getElementById("rejection_id").value;
             let reasoning = document.getElementById("rejection_reason").value;
             let staff_id = document.getElementById("r_staff_id").value;
-            if(id.trim() === "" || reasoning.trim() === "" || staff_id.trim() === ""){
+            if(id.trim() == "" || reasoning.trim() == "" || staff_id.trim() == ""){
                 alert("Please fill in all inputs!")
             } else{
                 let host = "https://project3-backend-part2.onrender.com";
@@ -736,7 +764,7 @@
         async function completeEvaluateRules(){
             let patient_id = document.getElementById("patient_id").value;
             let ans_string = "";
-            if (patient_id.trim() === "") {
+            if (patient_id.trim() == "") {
                 alert("Make sure patient id is filled!")        
             } else{
                 let host = "https://project3-backend-part2.onrender.com";
@@ -768,7 +796,6 @@
                 for (const entry of result) {
                     let observationId = entry.observation_id;
                     let patientId = entry.patient.actor_id;
-                    let patientName = entry.patient.full_name;
                     let recordingTime = entry.recordingTime;
                     let applicabilityTime = entry.applicabilityTime;
                     let protocolId = entry.protocol.protocol_id;
@@ -778,6 +805,7 @@
                     let source = entry.source;
                     let concept_identifier = entry.conceptIdentifier;
                     let type = entry.type;
+                    let anomaly = entry.anomaly;
 
                     let row = document.createElement("tr");
 
@@ -786,51 +814,52 @@
                     row.appendChild(cell1);
 
                     let cell2 = document.createElement("td");
-                    cell2.textContent = patientId;
+                    cell2.textContent = staffId;
                     row.appendChild(cell2);
 
                     let cell3 = document.createElement("td");
-                    cell3.textContent = patientName;
+                    cell3.textContent = patientId;
                     row.appendChild(cell3);
 
                     let cell4 = document.createElement("td");
-                    cell4.textContent = recordingTime;
+                    cell4.textContent = concept_identifier;
                     row.appendChild(cell4);
 
                     let cell5 = document.createElement("td");
-                    cell5.textContent = applicabilityTime;
+                    cell5.textContent = protocolId;
                     row.appendChild(cell5);
 
                     let cell6 = document.createElement("td");
-                    cell6.textContent = protocolId;
+                    cell6.textContent = type;
                     row.appendChild(cell6);
 
                     let cell7 = document.createElement("td");
-                    cell7.textContent = status;
+                    cell7.textContent = recordingTime;
                     row.appendChild(cell7);
 
                     let cell8 = document.createElement("td");
-                    cell8.textContent = rejectReason;
+                    cell8.textContent = applicabilityTime;
                     row.appendChild(cell8);
 
                     let cell9 = document.createElement("td");
-                    cell9.textContent = staffId;
+                    cell9.textContent = status;
                     row.appendChild(cell9);
 
                     let cell10 = document.createElement("td");
-                    cell10.textContent = type;
+                    cell10.textContent = rejectReason;
                     row.appendChild(cell10);
 
                     let cell11 = document.createElement("td");
-                    cell11.textContent = concept_identifier;
+                    cell11.textContent = source;
+                    if(source == "INFERRED"){
+                        cell11.style.fontStyle = "italic";
+                    }
                     row.appendChild(cell11);
 
                     let cell12 = document.createElement("td");
-                    cell12.textContent = source;
-                    if(source == "INFERRED"){
-                        cell12.style.fontStyle = "italic";
-                    }
+                    cell12.textContent = anomaly;
                     row.appendChild(cell12);
+
                     table.appendChild(row);
 
 
@@ -856,7 +885,7 @@
             let phen_type_id = document.getElementById("m_phenomenon_type_id").value;
             let staff_id = document.getElementById("m_staff_id").value;
 
-            if (value.trim() === "" || unit.trim() === "" || patient_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || phen_type_id.trim() === "" || staff_id.trim() === "") {
+            if (value.trim() == "" || unit.trim() == "" || patient_id.trim() == "" || app_time.trim() == "" || protocol_id.trim() == "" || status.trim() == "" || phen_type_id.trim() == "" || staff_id.trim() == "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
                 let host = "https://project3-backend-part2.onrender.com";
@@ -895,7 +924,7 @@
             let staff_id = document.getElementById("c_staff_id").value;
 
 
-            if (presence.trim() === "" || patient_id.trim() === "" || phen_id.trim() === "" || app_time.trim() === "" || protocol_id.trim() === "" || status.trim() === "" || staff_id.trim() === "") {
+            if (presence.trim() == "" || patient_id.trim() == "" || phen_id.trim() == "" || app_time.trim() == "" || protocol_id.trim() == "" || status.trim() == "" || staff_id.trim() == "") {
                 alert("One or more input fields are missing! Please complete before proceeding.");         
             } else{
                 let host = "https://project3-backend-part2.onrender.com";
