@@ -718,6 +718,10 @@
             let host = "https://project3-backend-part2.onrender.com";
             let min = document.getElementById("pt_min").value;
             let max = document.getElementById("pt_max").value;
+            if (kind === "QUALITATIVE") {
+                min = 0.0;
+                max = 0.0;
+            }
 
             if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min) || checkEmptyInput(max)){
                 alert("Please fill in all inputs to proceed!")
