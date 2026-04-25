@@ -187,6 +187,8 @@
         <input id="pt_units"/>
         <label for="pt_phenomena"> Phenomena (Please separate by commas): </label>
         <input id="pt_phenomena"/>
+        <label for="pt_staff_id"> Staff ID: </label>
+        <input id="pt_staff_id"/>   
         <br>
         <label for="pt_min"> Min: </label>
         <input id="pt_min"/>
@@ -225,6 +227,8 @@
     <input id="phen_child_id"/>
     <label for="phen_parent_id"> Parent Phenomenon ID: </label>
     <input id="phen_parent_id"/>
+    <label for="parent_staff_id"> Staff ID: </label>
+    <input id="parent_staff_id"/>
     <br>
     <button onclick="submitParentConcept()">Assign</button>
     <br>
@@ -235,6 +239,8 @@
      <input id="p_description"/>
      <label for="p_rating"> Accuracy Rating: </label>
      <input id="p_rating"/>
+     <label for="p_staff_id_catalog"> Staff ID: </label>
+     <input id="p_staff_id_catalog"/>
      <br>
      <br>
      <button onclick="submitProtocol()">Submit Protocol</button>
@@ -366,13 +372,16 @@
         async function submitParentConcept(){
             let id = document.getElementById("phen_child_id").value;
             let parent_id = document.getElementById("phen_parent_id").value;
+            let staff_id = document.getElementById("parent_staff_id").value;
 
-            if(checkEmptyInput(id) || checkEmptyInput(parent_id)){
+            if(checkEmptyInput(id) || checkEmptyInput(parent_id) || checkEmptyInput(staff_id)){
                 alert("Please fill in all inputs!");
             } else{
                 let host = "https://project3-backend-part2.onrender.com";
                 let formData = new FormData();
                 formData.append("parent_id", parent_id);
+                formData.append("staff_id", staff_id);
+
 
                 let request = {
                     method: "POST",
@@ -385,6 +394,7 @@
                     alert("Parent concept successfully updated!");
                     document.getElementById("phen_child_id").value = "";
                     document.getElementById("phen_parent_id").value = "";
+                    document.getElementById("parent_staff_id").value = "";
                 } else{
                     let msg = await response.text();
                     alert(msg);
@@ -650,27 +660,35 @@
             let name = document.getElementById("p_name").value;
             let description = document.getElementById("p_description").value;
             let accuracy_rating = document.getElementById("p_rating").value;
-            let host = "https://project3-backend-part2.onrender.com";
-            let formData = new FormData();
-            formData.append("name", name);
-            formData.append("description", description);
-            formData.append("accuracy_rating", accuracy_rating);
-            let request =
-            {
-                method: "POST",
-                body: formData
-            };
-
-            let response = await fetch(host + "/api/protocols", request);
-            if(response.status == 200){
-                alert("Protocol succesfully created!");
-                document.getElementById("p_name").value = "";
-                document.getElementById("p_description").value = "";
-                document.getElementById("p_rating").value = "";
+            let staff_id = document.getElementById("p_staff_id_catalog").value;
+            if(checkEmptyInput(name) || checkEmptyInput(description) || checkEmptyInput(accuracy_rating) || checkEmptyInput(staff_id)) {
+                alert("Please fill in all inputs!");
             } else{
-                    let msg = await response.text();
-                    alert(msg);
+                let host = "https://project3-backend-part2.onrender.com";
+                let formData = new FormData();
+                formData.append("name", name);
+                formData.append("description", description);
+                formData.append("accuracy_rating", accuracy_rating);
+                formData.append("staff_id", staff_id);
+                let request =
+                {
+                    method: "POST",
+                    body: formData
+                };
+
+                let response = await fetch(host + "/api/protocols", request);
+                if(response.status == 200){
+                    alert("Protocol succesfully created!");
+                    document.getElementById("p_name").value = "";
+                    document.getElementById("p_description").value = "";
+                    document.getElementById("p_rating").value = "";
+                    document.getElementById("p_staff_id_catalog").value = "";
+                } else{
+                        let msg = await response.text();
+                        alert(msg);
                 }
+            }
+            
 
         }
 
@@ -724,13 +742,14 @@
             let host = "https://project3-backend-part2.onrender.com";
             let min = document.getElementById("pt_min").value;
             let max = document.getElementById("pt_max").value;
+            let staff_id = document.getElementById("pt_staff_id").value;
             if (kind === "QUALITATIVE") {
                 min = 0.0;
                 max = 0.0;
             }
 
-            if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min) || checkEmptyInput(max)){
-                alert("Please fill in all inputs to proceed!")
+            if(checkEmptyInput(name) || checkEmptyInput(kind) || checkEmptyInput(allowed_units) || checkEmptyInput(phenomena) || checkEmptyInput(min) || checkEmptyInput(max) || checkEmptyInput(staff_id)) {
+                alert("Please fill in all inputs to proceed!");
             }  else{
                 let formData = new FormData();
                 formData.append("name", name);
@@ -739,6 +758,7 @@
                 formData.append("phenomena", phenomena);
                 formData.append("min", min);
                 formData.append("max", max);
+                formData.append("staff_id", staff_id);
                 let request =
                 {
                     method: "POST",
@@ -754,6 +774,7 @@
                     document.getElementById("pt_phenomena").value = "";
                     document.getElementById("pt_min").value = "";
                     document.getElementById("pt_max").value = "";
+                    document.getElementById("pt_staff_id").value = "";
                 }else{
                     let msg = await response.text();
                     alert(msg);
