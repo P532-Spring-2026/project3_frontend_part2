@@ -304,10 +304,10 @@
         </tbody>
     </table>
     <br>
-    <h3>Create Associative Function</h3>
+    <h1>Create Associative Function</h1>
         <br>
         <br>
-        <h4>Instructions: For a single argument, separate using commas and operators as needed. Separate each arguement from other arguments using semicolons; Add weights in corresponding order separated by semicolons.</h4>
+        <h3>Instructions: For a single argument, separate using commas and operators as needed. Separate each arguement from other arguments using semicolons; Add weights in corresponding order separated by semicolons.</h3>
         <label>Arguments:</label><br>
         <input id="af_args"/>
         <br>
@@ -359,6 +359,11 @@
 
                 if(response.status == 200){
                     alert("Associative Function created!");
+                    document.getElementById("af_args").value = "";
+                    document.getElementById("af_product").value = "";
+                    document.getElementById("af_strategy").value = "";
+                    document.getElementById("af_weights").value = "";
+                    document.getElementById("af_threshold").value = "";
                 } else{
                     let msg = await response.text();
                     alert(msg);
