@@ -288,6 +288,7 @@
             <th>Patient Id</th>
             <th>Event</th>
             <th>Timestamp</th>
+            <th>Staff Id</th>
         </tr>
         </thead>
         <tbody id="auditlog_list">
@@ -553,6 +554,7 @@
                 let patient = entry.patientId;
                 let event = entry.event;
                 let execution_time = entry.timestamp;
+                let staff_id = entry.staffId;
                 let row = document.createElement("tr");
 
                 let cell1 = document.createElement("td");
@@ -574,6 +576,10 @@
                 let cell5 = document.createElement("td");
                 cell5.textContent = execution_time;
                 row.appendChild(cell5);
+
+                let cell6 = document.createElement("td");
+                cell6.textContent = staff_id;
+                row.appendChild(cell6);
 
                 table.appendChild(row);
             
@@ -881,82 +887,88 @@
                     method: "GET",
                 }; 
                 let response = await fetch(host + "/api/patients/" + patient_id + "/observations", request);
-                let result = await response.json();
-                let table = document.getElementById("observations_list");
-                table.innerHTML = "";
+                if(response.status == 200){
+                    alert("Observations succesfully retrieved!")
+                    let result = await response.json();
+                    let table = document.getElementById("observations_list");
+                    table.innerHTML = "";
 
-                for (const entry of result) {
-                    let observationId = entry.observation_id;
-                    let patientId = entry.patient.actor_id;
-                    let recordingTime = entry.recordingTime;
-                    let applicabilityTime = entry.applicabilityTime;
-                    let protocolId = entry.protocol.protocol_id;
-                    let status = entry.status;
-                    let rejectReason = entry.rejectReason;
-                    let staffId = entry.staff.actor_id;
-                    let source = entry.source;
-                    let concept_identifier = entry.conceptIdentifier;
-                    let type = entry.type;
-                    let anomaly = entry.anomaly;
+                    for (const entry of result) {
+                        let observationId = entry.observation_id;
+                        let patientId = entry.patient.actor_id;
+                        let recordingTime = entry.recordingTime;
+                        let applicabilityTime = entry.applicabilityTime;
+                        let protocolId = entry.protocol.protocol_id;
+                        let status = entry.status;
+                        let rejectReason = entry.rejectReason;
+                        let staffId = entry.staff.actor_id;
+                        let source = entry.source;
+                        let concept_identifier = entry.conceptIdentifier;
+                        let type = entry.type;
+                        let anomaly = entry.anomaly;
 
-                    let row = document.createElement("tr");
+                        let row = document.createElement("tr");
 
-                    let cell1 = document.createElement("td");
-                    cell1.textContent = observationId;
-                    row.appendChild(cell1);
+                        let cell1 = document.createElement("td");
+                        cell1.textContent = observationId;
+                        row.appendChild(cell1);
 
-                    let cell2 = document.createElement("td");
-                    cell2.textContent = staffId;
-                    row.appendChild(cell2);
+                        let cell2 = document.createElement("td");
+                        cell2.textContent = staffId;
+                        row.appendChild(cell2);
 
-                    let cell3 = document.createElement("td");
-                    cell3.textContent = patientId;
-                    row.appendChild(cell3);
+                        let cell3 = document.createElement("td");
+                        cell3.textContent = patientId;
+                        row.appendChild(cell3);
 
-                    let cell4 = document.createElement("td");
-                    cell4.textContent = concept_identifier;
-                    row.appendChild(cell4);
+                        let cell4 = document.createElement("td");
+                        cell4.textContent = concept_identifier;
+                        row.appendChild(cell4);
 
-                    let cell5 = document.createElement("td");
-                    cell5.textContent = protocolId;
-                    row.appendChild(cell5);
+                        let cell5 = document.createElement("td");
+                        cell5.textContent = protocolId;
+                        row.appendChild(cell5);
 
-                    let cell6 = document.createElement("td");
-                    cell6.textContent = type;
-                    row.appendChild(cell6);
+                        let cell6 = document.createElement("td");
+                        cell6.textContent = type;
+                        row.appendChild(cell6);
 
-                    let cell7 = document.createElement("td");
-                    cell7.textContent = recordingTime;
-                    row.appendChild(cell7);
+                        let cell7 = document.createElement("td");
+                        cell7.textContent = recordingTime;
+                        row.appendChild(cell7);
 
-                    let cell8 = document.createElement("td");
-                    cell8.textContent = applicabilityTime;
-                    row.appendChild(cell8);
+                        let cell8 = document.createElement("td");
+                        cell8.textContent = applicabilityTime;
+                        row.appendChild(cell8);
 
-                    let cell9 = document.createElement("td");
-                    cell9.textContent = status;
-                    row.appendChild(cell9);
+                        let cell9 = document.createElement("td");
+                        cell9.textContent = status;
+                        row.appendChild(cell9);
 
-                    let cell10 = document.createElement("td");
-                    cell10.textContent = rejectReason;
-                    row.appendChild(cell10);
+                        let cell10 = document.createElement("td");
+                        cell10.textContent = rejectReason;
+                        row.appendChild(cell10);
 
-                    let cell11 = document.createElement("td");
-                    cell11.textContent = source;
-                    if(source == "INFERRED"){
-                        cell11.style.fontStyle = "italic";
+                        let cell11 = document.createElement("td");
+                        cell11.textContent = source;
+                        if(source == "INFERRED"){
+                            cell11.style.fontStyle = "italic";
+                        }
+                        row.appendChild(cell11);
+
+                        let cell12 = document.createElement("td");
+                        cell12.textContent = anomaly;
+                        row.appendChild(cell12);
+
+                        table.appendChild(row);
+
+
+                        }
+                    } else{
+                        alert("Patient does not exist!");
                     }
-                    row.appendChild(cell11);
-
-                    let cell12 = document.createElement("td");
-                    cell12.textContent = anomaly;
-                    row.appendChild(cell12);
-
-                    table.appendChild(row);
-
-
-                }
-            }
+                } 
+                
                 
         }   
         
@@ -998,7 +1010,7 @@
                     alert("Measurement was succesfully created!");
                     document.getElementById("value").value = "";
                     document.getElementById("unit").value = "";
-                    document.getElementById("patient_id").value = "";
+                    document.getElementById("m_patient_id").value = "";
                     document.getElementById("m_application_time").value = "";
                     document.getElementById("m_protocol_id").value = "";
                     document.getElementById("m_phenomenon_type_id").value = "";
