@@ -560,7 +560,12 @@
                 for (const entry of result) {
                     let id = entry.p_Id;
                     let phenType = entry.phenomenonType.name;
-                    let parentId = entry.parent_concept.p_Id;
+                    let parentId = "";
+                    if (entry.parent_concept == null) {
+                        parentId = "No parent";
+                    } else {
+                        parentId = entry.parent_concept.p_Id;
+                    }
                     let name = entry.name;
                
                     let row = document.createElement("tr");
