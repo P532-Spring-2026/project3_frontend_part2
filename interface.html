@@ -343,52 +343,52 @@
     <br>
     <script>
         async function getAFs(){
-        let host = "https://project3-backend-part2.onrender.com";
-        let response = await fetch(host + "/api/af");
-        let result = await response.json();
-        let table = document.getElementById("af_list");
-        table.innerHTML = "";
+            let host = "https://project3-backend-part2.onrender.com";
+            let response = await fetch(host + "/api/af");
+            let result = await response.json();
+            let table = document.getElementById("af_list");
+            table.innerHTML = "";
 
-        for(const entry of result){
-            let id = entry.af_id;
-            let args = entry.argument_concepts;
-            let product = entry.product_concepts;
-            let strategy = entry.strategyEnum;
-            let threshold = entry.threshold;
+            for(const entry of result){
+                let id = entry.af_id;
+                let args = entry.argument_concepts;
+                let product = entry.product_concepts;
+                let strategy = entry.strategyEnum;
+                let threshold = entry.threshold;
 
-            let argsString = "";
-            for(const key in args){
-                argsString += key + " : " + args[key] + "; ";
+                let argsString = "";
+                for(const key in args){
+                    argsString += key + " : " + args[key] + "; ";
+                }
+
+                let row = document.createElement("tr");
+
+                let cell1 = document.createElement("td");
+                cell1.textContent = id;
+                row.appendChild(cell1);
+
+                let cell2 = document.createElement("td");
+                cell2.textContent = argsString;
+                row.appendChild(cell2);
+
+                let cell3 = document.createElement("td");
+                cell3.textContent = product;
+                row.appendChild(cell3);
+
+                let cell4 = document.createElement("td");
+                cell4.textContent = strategy;
+                row.appendChild(cell4);
+
+                let cell5 = document.createElement("td");
+                cell5.textContent = threshold;
+                row.appendChild(cell5);
+
+                table.appendChild(row);
             }
-
-            let row = document.createElement("tr");
-
-            let cell1 = document.createElement("td");
-            cell1.textContent = id;
-            row.appendChild(cell1);
-
-            let cell2 = document.createElement("td");
-            cell2.textContent = argsString;
-            row.appendChild(cell2);
-
-            let cell3 = document.createElement("td");
-            cell3.textContent = product;
-            row.appendChild(cell3);
-
-            let cell4 = document.createElement("td");
-            cell4.textContent = strategy;
-            row.appendChild(cell4);
-
-            let cell5 = document.createElement("td");
-            cell5.textContent = threshold;
-            row.appendChild(cell5);
-
-            table.appendChild(row);
-        }
         }
 
-        getAFs();
-        setInterval(getAFs, 3000);
+            getAFs();
+            setInterval(getAFs, 3000);
     </script>
   
     <script>
@@ -1052,9 +1052,8 @@
                         row.appendChild(cell12);
 
                         table.appendChild(row);
-
-
                         }
+                        document.getElementById("patient_id").value = "";
                     } else{
                         alert("Patient does not exist!");
                     }
@@ -1146,7 +1145,7 @@
                 if(response.status == 200){
                     alert("Category observation was succesfully created!");
                     document.getElementById("c_presence").value = "";
-                    document.getElementById("patient_id").value = "";
+                    document.getElementById("c_patient_id").value = "";
                     document.getElementById("c_phenomenon_id").value = "";
                     document.getElementById("c_application_time").value = "";
                     document.getElementById("c_protocol_id").value = "";
